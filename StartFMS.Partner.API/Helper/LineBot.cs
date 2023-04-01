@@ -1,5 +1,4 @@
-﻿using isRock.LineBot;
-using StartFMS.Extensions.Line;
+﻿using StartFMS.Extensions.Line;
 
 namespace StartFMS.Partner.API.Helper
 {
