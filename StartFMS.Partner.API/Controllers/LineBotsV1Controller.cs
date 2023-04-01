@@ -7,15 +7,15 @@ using StartFMS.Models.Backend;
 namespace StartFMS.Partner.API.Controllers;
 
 [ApiController]
-[Route("/LineApi/")]
-public class LineBotsController : ControllerBase {
-    private readonly ILogger<LineBotsController> _logger;
+[Route("/api/Line/Bot/v1.0/")]
+public class LineBotsV1Controller : ControllerBase {
+    private readonly ILogger<LineBotsV1Controller> _logger;
     private LineBots _lineBots;
     private readonly A00_BackendContext _backendContext;
 
 
-    public LineBotsController(
-        ILogger<LineBotsController> logger,
+    public LineBotsV1Controller(
+        ILogger<LineBotsV1Controller> logger,
         LineBots lineBots,
         A00_BackendContext backendContext) {
         _logger = logger;
