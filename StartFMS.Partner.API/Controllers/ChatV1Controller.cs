@@ -6,11 +6,11 @@ namespace StartFMS.Partner.Line.WebAPI.Controllers;
 
 [ApiController]
 [Route("/api/Chat/v1.0/")]
-public class ChatController : ControllerBase
+public class ChatV1Controller : ControllerBase
 {
-    private readonly ILogger<ChatController> _logger;
+    private readonly ILogger<ChatV1Controller> _logger;
 
-    public ChatController(ILogger<ChatController> logger)
+    public ChatV1Controller(ILogger<ChatV1Controller> logger)
     {
         _logger = logger;
     }

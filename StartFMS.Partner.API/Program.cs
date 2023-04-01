@@ -4,8 +4,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OpenAI.GPT3.Extensions;
 using StartFMS.Models.Backend;
+using StartFMS.Partner.API.Helper;
 using StartFMS.Partner.Extensions;
-using StartFMS.Partner.Line.WebAPI.Extensions.LineBots;
 using System.Text;
 
 
@@ -93,11 +93,11 @@ var backend = new A00_BackendContext() {
 };
 builder.Services.AddSingleton<A00_BackendContext>(backend);
 
-var lineBots = new LineBots() {
+var lineBots = new LineBot() {
     ChannelToken = config.GetValue<string>("Line:Bots:channelToken"),
     AdminUserID = config.GetValue<string>("Line:Bots:adminUserID")
 };
-builder.Services.AddSingleton<LineBots>(lineBots);
+builder.Services.AddSingleton<LineBot>(lineBots);
 
 
 builder.Services.AddSwaggerGen(c => {
