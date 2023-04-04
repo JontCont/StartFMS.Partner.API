@@ -6,10 +6,9 @@ namespace StartFMS.Partner.API.Helper
     {
         public override void MessageText()
         {
-            var @event = ReceivedMessage.events.FirstOrDefault();
+            var @event = LineReceived.events.FirstOrDefault();
             string message = @event!=null ? @event.message.text:"";
             ReplyMessage(message);
-            //base.MessageText();
         }
     }
 }

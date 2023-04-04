@@ -1,7 +1,7 @@
 ﻿using OpenAI.GPT3.Managers;
 using OpenAI.GPT3.ObjectModels.RequestModels;
 using OpenAI.GPT3;
-using StartFMS.Partner.Extensions;
+using StartFMS.Extensions.Configuration;
 
 namespace StartFMS.Partner.Line.WebAPI.Extensions.ChatGPT {
     public static class Chat {

@@ -4,6 +4,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using StartFMS.Models.Identity;
+using StartFMS.Extensions.Configuration;
+
 namespace StartFMS.Partner.Extensions;
 
 public class JwtHelpers

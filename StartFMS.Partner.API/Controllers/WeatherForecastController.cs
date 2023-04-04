@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using StartFMS.Extensions.Configuration;
 using StartFMS.Models.Backend;
 using StartFMS.Partner.Extensions;
 

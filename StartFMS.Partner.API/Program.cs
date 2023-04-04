@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OpenAI.GPT3.Extensions;
+using StartFMS.Extensions.Configuration;
 using StartFMS.Models.Backend;
 using StartFMS.Partner.API.Helper;
 using StartFMS.Partner.Extensions;
