@@ -13,15 +13,13 @@
     <PackageReference Include="LineBotSDK" Version="2.10.37" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.14" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="StartFMS.Extensions.Configuration" Version="1.0.0" />
+    <PackageReference Include="StartFMS.Extensions.Configuration" Version="1.0.1" />
     <PackageReference Include="StartFMS.Extensions.Data" Version="1.0.5" />
-    <PackageReference Include="StartFMS.Extensions.Line" Version="1.0.2" />
+    <PackageReference Include="StartFMS.Extensions.Line" Version="1.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\StartFMS\library\StartFMS.Extensions.Configuration\StartFMS.Extensions.Configuration.csproj" />
-    <ProjectReference Include="..\..\StartFMS\library\StartFMS.Extensions.Line\StartFMS.Extensions.Line.csproj" />
     <ProjectReference Include="..\StartFMS.Models\StartFMS.Models.csproj" />
   </ItemGroup>
 
