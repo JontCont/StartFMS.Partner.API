@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OpenAI.GPT3.Extensions;
 using StartFMS.Extensions.Configuration;
+using StartFMS.Extensions.Line;
 using StartFMS.Models.Backend;
 using StartFMS.Partner.API.Helper;
 using StartFMS.Partner.Extensions;
@@ -11,8 +12,7 @@ using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
-var config = Config.GetConfiguration(); //加入設定檔
-builder.Configuration.AddUserSecrets<Program>();
+var config = Config.GetConfiguration<Program>(); //加入設定檔
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -99,6 +99,29 @@ var lineBots = new LineBot() {
     AdminUserID = config.GetValue<string>("Line:Bots:adminUserID")
 };
 builder.Services.AddSingleton<LineBot>(lineBots);
+
+var lineLogin = new LineLogin()
+{
+    ChannelToken = config.GetValue<string>("Line:Login:channelToken"),
+    AdminUserID = config.GetValue<string>("Line:Login:adminUserID"),
+    urlRequest = new LineLogin.UrlRequest
+    {
+        url = config.GetValue<string>("Line:Login:openIdConnect:url"),
+        response_type = config.GetValue<string>("Line:Login:openIdConnect:response_type"),
+        client_id = config.GetValue<string>("Line:Login:openIdConnect:client_id"),
+        redirect_uri = config.GetValue<string>("Line:Login:openIdConnect:redirect_uri"),
+        scope = config.GetValue<string>("Line:Login:openIdConnect:scope"),
+        state = config.GetValue<string>("Line:Login:openIdConnect:state"),
+    }
+};
+builder.Services.AddSingleton<LineLogin>(lineLogin);
+
+var lineNotify = new LineNotify()
+{
+    ChannelToken = config.GetValue<string>("Line:Notify:channelToken"),
+};
+builder.Services.AddSingleton<LineNotify>(lineNotify);
+
 
 
 builder.Services.AddSwaggerGen(c => {
