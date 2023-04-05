@@ -24,7 +24,7 @@ public class LineLoginV1Controller : ControllerBase
     }
 
     [HttpGet(Name = "")]
-    public IActionResult ReceivedAuthorize([FromQuery] string code)
+    public IActionResult ReceivedAuthorize([FromQuery] string? code)
     {
         if (string.IsNullOrEmpty(code))
         {
