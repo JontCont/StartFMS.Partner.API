@@ -119,6 +119,16 @@ builder.Services.AddSingleton<LineLogin>(lineLogin);
 var lineNotify = new LineNotify()
 {
     ChannelToken = config.GetValue<string>("Line:Notify:channelToken"),
+    DeveloperToken = config.GetValue<string>("Line:Notify:developerToken"),
+    urlRequest = new LineNotify.UrlRequest
+    {
+        url = config.GetValue<string>("Line:Notify:openIdConnect:url"),
+        response_type = config.GetValue<string>("Line:Notify:openIdConnect:response_type"),
+        client_id = config.GetValue<string>("Line:Notify:openIdConnect:client_id"),
+        redirect_uri = config.GetValue<string>("Line:Notify:openIdConnect:redirect_uri"),
+        scope = config.GetValue<string>("Line:Notify:openIdConnect:scope"),
+        state = config.GetValue<string>("Line:Notify:openIdConnect:state"),
+    }
 };
 builder.Services.AddSingleton<LineNotify>(lineNotify);
 

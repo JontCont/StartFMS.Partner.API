@@ -10,29 +10,44 @@ namespace StartFMS.Partner.API.Controllers;
 [Route("/api/Line/Notify/v1.0/")]
 public class LineNotifyV1Controller : ControllerBase
 {
-    private readonly ILogger<LineNotifyV1Controller> _logger;
     private LineNotify _LineNotify;
-    private readonly A00_BackendContext _backendContext;
 
-
-    public LineNotifyV1Controller(
-        ILogger<LineNotifyV1Controller> logger,
-        LineNotify LineNotify,
-        A00_BackendContext backendContext)
+    public LineNotifyV1Controller(LineNotify LineNotify)
     {
-        _logger = logger;
         _LineNotify = LineNotify;
-        _backendContext = backendContext;
     }
 
-    [HttpGet]
-    public string SendMessage()
+    [HttpGet("Developer")]
+    public string DeveloperSendMessage()
     {
-        _LineNotify.Send($"發送訊息時間 : {DateTime.Now}");
+        _LineNotify.DeveloperSend($"發送訊息時間 : {DateTime.Now}");
         return JsonConvert.SerializeObject(new
         {
             Success = true,
             Message = ""
         });
+    }
+
+
+    [HttpGet]
+    public IActionResult SendMessage([FromQuery] string? code)
+    {
+        if (string.IsNullOrEmpty(code))
+        {
+            string Url = _LineNotify.GetNotifyUrl();
+            return Redirect(Url); //發送網址
+        }
+        try
+        {
+            var token = _LineNotify.GetTokenFromCode(code);
+            _LineNotify.Send($"發送訊息時間 : {DateTime.Now}", token.access_token, 446, 1988);
+        }
+        catch
+        {
+            return Ok(new { sccess = false, message="尚未加入 Notify 到頻道中" });
+        }
+
+
+        return Ok(new { sccess = true });
     }
 }

@@ -8,19 +8,11 @@ namespace StartFMS.Partner.API.Controllers;
 [Route("/api/Line/Login/v1.0/")]
 public class LineLoginV1Controller : ControllerBase
 {
-    private readonly ILogger<LineLoginV1Controller> _logger;
     private LineLogin _LineLogin;
-    private readonly A00_BackendContext _backendContext;
 
-
-    public LineLoginV1Controller(
-        ILogger<LineLoginV1Controller> logger,
-        LineLogin LineLogin,
-        A00_BackendContext backendContext)
+    public LineLoginV1Controller(LineLogin LineLogin)
     {
-        _logger = logger;
         _LineLogin = LineLogin;
-        _backendContext = backendContext;
     }
 
     [HttpGet(Name = "")]

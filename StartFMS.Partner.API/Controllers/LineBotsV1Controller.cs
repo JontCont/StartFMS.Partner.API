@@ -10,18 +10,10 @@ namespace StartFMS.Partner.API.Controllers;
 [Route("/api/Line/Bot/v1.0/")]
 public class LineBotsV1Controller : ControllerBase
 {
-    private readonly ILogger<LineBotsV1Controller> _logger;
     private LineBot _lineBots;
-    private readonly A00_BackendContext _backendContext;
 
-
-    public LineBotsV1Controller(
-        ILogger<LineBotsV1Controller> logger,
-        LineBot lineBots,
-        A00_BackendContext backendContext) {
-        _logger = logger;
+    public LineBotsV1Controller(LineBot lineBots) {
         _lineBots = lineBots;
-        _backendContext = backendContext;
     }
 
     [HttpPost("", Name = "Message Reply")]
