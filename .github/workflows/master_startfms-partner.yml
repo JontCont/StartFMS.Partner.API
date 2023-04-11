@@ -53,5 +53,5 @@ jobs:
         with:
           app-name: 'startfms-partner'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0C961DCAD02A4A37BB837148C1F0B86A }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C79D684245A646818A3B80F72FEEB1D9 }}
           package: .
