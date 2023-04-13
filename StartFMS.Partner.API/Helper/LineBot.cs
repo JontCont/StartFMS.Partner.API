@@ -25,5 +25,12 @@ public partial class LineBot:LineBots
         }
     }
 
+    public override void MessageSticker()
+    {
+        var @event = LineReceived.events.FirstOrDefault();
+        isRock.LineBot.Utility.ReplyStickerMessage(this.ReplyUserID,@event.message.packageId,@event.message.stickerId,this.ChannelToken);
+        //base.MessageSticker();  
+    }
+
 
 }
