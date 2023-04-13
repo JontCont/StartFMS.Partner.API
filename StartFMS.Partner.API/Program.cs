@@ -33,9 +33,9 @@ builder.Services.AddCors(options => {
 });
 
 //設定參數
-builder.Services.AddDbContext<A00_BackendContext>(content => {
-    content.UseSqlServer(config.GetConnectionString("Default"));
-});
+//builder.Services.AddDbContext<A00_BackendContext>(content => {
+//    content.UseSqlServer(config.GetConnectionString("Default"));
+//});
 
 var lineBots = new LineBot() {
     ChannelToken = config.GetValue<string>("Line:Bots:channelToken"),
