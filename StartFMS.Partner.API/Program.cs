@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using OpenAI.GPT3;
 using OpenAI.GPT3.Extensions;
+using OpenAI.GPT3.Managers;
 using StartFMS.Extensions.Configuration;
 using StartFMS.Extensions.Line;
 using StartFMS.Models.Backend;
@@ -36,8 +38,13 @@ builder.Services.AddCors(options => {
 //builder.Services.AddDbContext<A00_BackendContext>(content => {
 //    content.UseSqlServer(config.GetConnectionString("Default"));
 //});
+var openAiService = new OpenAIService(new OpenAiOptions()
+{
+    ApiKey = config.GetValue<string>("OpenAIServiceOptions:ApiKey"),
+});
+builder.Services.AddSingleton<OpenAIService>(openAiService);
 
-var lineBots = new LineBot() {
+var lineBots = new LineBot(openAiService) {
     ChannelToken = config.GetValue<string>("Line:Bots:channelToken"),
     AdminUserID = config.GetValue<string>("Line:Bots:adminUserID")
 };
@@ -74,6 +81,7 @@ var lineNotify = new LineNotify()
     }
 };
 builder.Services.AddSingleton<LineNotify>(lineNotify);
+
 
 
 
