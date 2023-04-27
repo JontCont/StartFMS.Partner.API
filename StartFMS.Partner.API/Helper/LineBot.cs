@@ -1,10 +1,18 @@
-﻿using StartFMS.Extensions.Line;
-using StartFMS.Partner.Line.WebAPI.Extensions.ChatGPT;
+﻿using OpenAI.GPT3.Interfaces;
+using OpenAI.GPT3.Managers;
+using OpenAI.GPT3.ObjectModels.RequestModels;
+using StartFMS.Extensions.Line;
 
 namespace StartFMS.Partner.API.Helper;
 
 public partial class LineBot:LineBots
 {
+    private readonly OpenAIService _openAIService;
+    public LineBot(OpenAIService openAIService)
+    {
+        _openAIService = openAIService;
+    }
+
     public override async void MessageText()
     {
         //事件
@@ -17,7 +25,31 @@ public partial class LineBot:LineBots
         if(message.IndexOf("/chat ") == 0)
         {
             string quest = message.Substring(6) ;
-            ReplyMessage(await Chat.ResponseMessageAsync(quest));
+            var completionResult = _openAIService.Completions.CreateCompletionAsStream(new CompletionCreateRequest()
+            {
+                Prompt = message,
+                MaxTokens = 4000
+            }, OpenAI.GPT3.ObjectModels.Models.TextDavinciV3);
+
+            string str = "";
+            await foreach (var completion in completionResult)
+            {
+                if (completion.Successful)
+                {
+                    Console.Write(completion.Choices.FirstOrDefault()?.Text);
+                    str += completion.Choices.FirstOrDefault()?.Text;
+                }
+                else
+                {
+                    if (completion.Error == null)
+                    {
+                        throw new Exception("Unknown Error");
+                    }
+
+                    Console.WriteLine($"{completion.Error.Code}: {completion.Error.Message}");
+                }
+            }
+            ReplyMessage(str);
         }
         else
         {
