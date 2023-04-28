@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using StartFMS.Extensions.Configuration;
 using StartFMS.Models.Backend;
 using StartFMS.Partner.Extensions;
+using System.Net;
 
 namespace StartFMS.Partner.API.Controllers;
 
@@ -17,14 +18,11 @@ public class WeatherForecastController : ControllerBase
     };
 
     private readonly ILogger<WeatherForecastController> _logger;
-    private readonly A00_BackendContext _backendContext;
 
     public WeatherForecastController(
-        ILogger<WeatherForecastController> logger,
-        A00_BackendContext backendContext)
+        ILogger<WeatherForecastController> logger)
     {
         _logger = logger;
-        _backendContext = backendContext;
     }
 
     [HttpGet(Name = "GetWeatherForecast")]
@@ -39,27 +37,10 @@ public class WeatherForecastController : ControllerBase
         .ToArray();
     }
 
-    [HttpGet("AccountUsers")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
-    public string GetAccountUsers() {
-        UsersAuthorize users = new UsersAuthorize(Request);
-        try {
-            return JsonConvert.SerializeObject(_backendContext.A00AccountUsers.ToList());
-        }
-        catch (Exception ex) {
-            return $"Error : {ex.Message}";
-        }
-    }
-
-
     [HttpGet("Config")]
     public string GetConfig(string name) {
-        try {
-            string? config = Config.GetConfiguration().GetValue<string>(name);
-            return $"{name} : {config}";
-        }catch (Exception ex) {
-            return $"Error : {ex.Message}";
-        }
+        string? config = Config.GetConfiguration().GetValue<string>(name);
+        return $"{name} : {config}";
     }
 
     [HttpGet("DBConfig")]

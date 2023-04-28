@@ -6,6 +6,7 @@ using OpenAI.GPT3.Managers;
 using StartFMS.Extensions.Configuration;
 using StartFMS.Extensions.Line;
 using StartFMS.Models.Backend;
+using StartFMS.Partner.API.Filters;
 using StartFMS.Partner.API.Helper;
 
 
@@ -33,6 +34,13 @@ builder.Services.AddCors(options => {
                     .AllowAnyMethod();
         });
 });
+
+//Append Filter 
+builder.Services.AddControllers(content => {
+    content.Filters.Add(typeof(LogActionFilters));
+    content.Filters.Add(typeof(LogExceptionFilter));
+});
+
 
 //設定參數
 //builder.Services.AddDbContext<A00_BackendContext>(content => {
