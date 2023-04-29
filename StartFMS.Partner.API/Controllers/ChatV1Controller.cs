@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
 using Newtonsoft.Json;
 using OpenAI.GPT3.Managers;
+using OpenAI.GPT3.ObjectModels;
 using OpenAI.GPT3.ObjectModels.RequestModels;
+using StartFMS.Partner.API.Helper;
 
 namespace StartFMS.Partner.Line.WebAPI.Controllers;
 
@@ -19,40 +21,40 @@ public class ChatV1Controller : ControllerBase
         _openAIService = openAIService;
     }
 
-    [HttpPost]
-    public async Task<string> Post(string message)
+    [HttpGet]
+    public async Task<string> ChatGptMessage(string message)
     {
-        var completionResult = _openAIService.Completions.CreateCompletionAsStream(new CompletionCreateRequest()
-        {
-            Prompt = message,
-            MaxTokens = 4000
-        }, OpenAI.GPT3.ObjectModels.Models.TextDavinciV3);
-
-        string str = "";
-        await foreach (var completion in completionResult)
-        {
-            if (completion.Successful)
+        var completionResult =
+            await _openAIService.Completions.CreateCompletion(new CompletionCreateRequest()
             {
-                Console.Write(completion.Choices.FirstOrDefault()?.Text);
-                str += completion.Choices.FirstOrDefault()?.Text;
-            }
-            else
-            {
-                if (completion.Error == null)
-                {
-                    throw new Exception("Unknown Error");
-                }
+                Prompt = message,
+                Model = OpenAI.GPT3.ObjectModels.Models.TextDavinciV3,
+                MaxTokens = 4000
+            });
 
-                Console.WriteLine($"{completion.Error.Code}: {completion.Error.Message}");
-            }
-        }
-        _logger.LogInformation($" 最後回答結果 {str}");
-
-        return JsonConvert.SerializeObject(new {
+        return JsonConvert.SerializeObject(new
+        {
             Success = true,
-            Message = "",
+            Message = await ChatAIModule.ChatMessageAsync(completionResult),
         });
     }
 
+    [HttpGet("Image")]
+    public async Task<string> ChatGptImage(string message)
+    {
+        var imageResult = await _openAIService.Image.CreateImage(new ImageCreateRequest
+        {
+            Prompt = message,
+            N = 1,
+            Size = StaticValues.ImageStatics.Size.Size256,
+            ResponseFormat = StaticValues.ImageStatics.ResponseFormat.Url,
+        });
+
+        return JsonConvert.SerializeObject(new
+        {
+            Success = true,
+            Message = ChatAIModule.ChatImage(imageResult),
+        });
+    }
 
 }
