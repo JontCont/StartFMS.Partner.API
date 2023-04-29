@@ -1,6 +1,7 @@
 ﻿using isRock.LineBot;
 using OpenAI.GPT3.Interfaces;
 using OpenAI.GPT3.Managers;
+using OpenAI.GPT3.ObjectModels;
 using OpenAI.GPT3.ObjectModels.RequestModels;
 using StartFMS.Extensions.Line;
 
@@ -23,10 +24,20 @@ public partial class LineBot : LineBots
         string message = @event != null ? @event.message.text : "";
 
         // 回應訊息
-        ReplyMessage(await ChatGpt_MessageAsync(message));
+        if (message.IndexOf("/chat ") == 0)
+        {
+            string quest = message.Substring(6);
+            ReplyMessage(await ChatGpt_MessageAsync(quest));
+        }
+        if (message.IndexOf("/image ") == 0)
+        {
+            string quest = message.Substring(7);
+            ReplyImage(await ChatGpt_ImageAsync(quest));
+        }
+
     }
 
-    public async Task<string> ChatGpt_MessageAsync(string message)
+    private async Task<string> ChatGpt_MessageAsync(string message)
     {
         var completionResult =
             await _openAIService.Completions.CreateCompletion(new CompletionCreateRequest()
@@ -38,6 +49,19 @@ public partial class LineBot : LineBots
         return await ChatAIModule.ChatMessageAsync(completionResult); ;
     }
 
+    private async Task<string> ChatGpt_ImageAsync(string message)
+    {
+        var imageResult =
+            await _openAIService.Image.CreateImage(new ImageCreateRequest
+            {
+                Prompt = message,
+                N = 1,
+                Size = StaticValues.ImageStatics.Size.Size256,
+                ResponseFormat = StaticValues.ImageStatics.ResponseFormat.Url,
+            });
+
+        return ChatAIModule.ChatImage(imageResult).FirstOrDefault() ?? "";
+    }
     public override void MessageSticker()
     {
         var @event = LineReceived.events.FirstOrDefault();
