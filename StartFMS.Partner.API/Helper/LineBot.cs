@@ -18,7 +18,7 @@ public partial class LineBot : LineBots
     public override async void MessageText()
     {
         //事件
-        var @event = LineReceived.events.FirstOrDefault();
+        var @event = LineReceived?.events.FirstOrDefault();
 
         //取得留言字串
         string message = @event != null ? @event.message.text : "";
@@ -35,6 +35,11 @@ public partial class LineBot : LineBots
             ReplyImage(await ChatGpt_ImageAsync(quest));
         }
 
+        if (message.IndexOf("/test ") == 0)
+        {
+            string quest = message.Substring(6);
+            ReplyMessage("目前還在測試階段，敬請期待");
+        }
     }
 
     private async Task<string> ChatGpt_MessageAsync(string message)
