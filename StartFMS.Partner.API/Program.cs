@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using OpenAI.GPT3;
-using OpenAI.GPT3.Extensions;
-using OpenAI.GPT3.Managers;
+using OpenAI;
+using OpenAI.Extensions;
+using OpenAI.Managers;
+using StartFMS.EF;
 using StartFMS.Extensions.Configuration;
 using StartFMS.Extensions.Line;
-using StartFMS.Models.Backend;
 using StartFMS.Partner.API.Filters;
 using StartFMS.Partner.API.Helper;
 
@@ -43,16 +43,17 @@ builder.Services.AddControllers(content => {
 
 
 //設定參數
-//builder.Services.AddDbContext<A00_BackendContext>(content => {
-//    content.UseSqlServer(config.GetConnectionString("Default"));
-//});
+builder.Services.AddDbContext<StartFmsBackendContext>(content =>
+{
+    content.UseSqlServer(config.GetConnectionString("Default"));
+});
 var openAiService = new OpenAIService(new OpenAiOptions()
 {
     ApiKey = config.GetValue<string>("OpenAIServiceOptions:ApiKey"),
 });
 builder.Services.AddSingleton<OpenAIService>(openAiService);
 
-var lineBots = new LineBot(openAiService) {
+var lineBots = new LineBot() {
     ChannelToken = config.GetValue<string>("Line:Bots:channelToken"),
     AdminUserID = config.GetValue<string>("Line:Bots:adminUserID")
 };

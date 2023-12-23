@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using StartFMS.Extensions.Line;
-using StartFMS.Models.Backend;
-using StartFMS.Partner.API.Helper;
 
 namespace StartFMS.Partner.API.Controllers;
 
@@ -44,7 +42,7 @@ public class LineNotifyV1Controller : ControllerBase
         }
         catch
         {
-            return Ok(new { sccess = false, message="尚未加入 Notify 到頻道中" });
+            return Ok(new { sccess = false, message = "尚未加入 Notify 到頻道中" });
         }
 
 

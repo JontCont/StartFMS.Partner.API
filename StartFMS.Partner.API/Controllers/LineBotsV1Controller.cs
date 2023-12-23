@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using StartFMS.Extensions.Line;
-using StartFMS.Models.Backend;
 using StartFMS.Partner.API.Helper;
 
 namespace StartFMS.Partner.API.Controllers;
