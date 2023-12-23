@@ -39,6 +39,7 @@ builder.Services.AddCors(options => {
 builder.Services.AddControllers(content => {
     content.Filters.Add(typeof(LogActionFilters));
     content.Filters.Add(typeof(LogExceptionFilter));
+    content.Filters.Add(typeof(ApiResultFilter));
 });
 
 
