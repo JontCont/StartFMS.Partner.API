@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json;
-using OpenAI.GPT3.ObjectModels.ResponseModels;
 
 namespace StartFMS.Partner.API.Filters
 {

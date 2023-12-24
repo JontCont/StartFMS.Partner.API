@@ -1,11 +1,13 @@
+using Discord;
+using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using OpenAI.GPT3;
-using OpenAI.GPT3.Extensions;
-using OpenAI.GPT3.Managers;
+using OpenAI;
+using OpenAI.Extensions;
+using OpenAI.Managers;
+using StartFMS.EF;
 using StartFMS.Extensions.Configuration;
 using StartFMS.Extensions.Line;
-using StartFMS.Models.Backend;
 using StartFMS.Partner.API.Filters;
 using StartFMS.Partner.API.Helper;
 
@@ -21,14 +23,17 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddOpenAIService();
 
 //add core content
-builder.Services.AddCors(options => {
+builder.Services.AddCors(options =>
+{
     options.AddDefaultPolicy(
-        builder => {
+        builder =>
+        {
             builder.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod();
         });
 
     options.AddPolicy("AnotherPolicy",
-        builder => {
+        builder =>
+        {
             builder.AllowAnyOrigin()
                     .AllowAnyHeader()
                     .AllowAnyMethod();
@@ -36,23 +41,27 @@ builder.Services.AddCors(options => {
 });
 
 //Append Filter 
-builder.Services.AddControllers(content => {
+builder.Services.AddControllers(content =>
+{
     content.Filters.Add(typeof(LogActionFilters));
     content.Filters.Add(typeof(LogExceptionFilter));
+    content.Filters.Add(typeof(ApiResultFilter));
 });
 
 
 //設定參數
-//builder.Services.AddDbContext<A00_BackendContext>(content => {
-//    content.UseSqlServer(config.GetConnectionString("Default"));
-//});
+builder.Services.AddDbContext<StartFmsBackendContext>(content =>
+{
+    content.UseSqlServer(config.GetConnectionString("Default"));
+});
 var openAiService = new OpenAIService(new OpenAiOptions()
 {
     ApiKey = config.GetValue<string>("OpenAIServiceOptions:ApiKey"),
 });
 builder.Services.AddSingleton<OpenAIService>(openAiService);
 
-var lineBots = new LineBot(openAiService) {
+var lineBots = new LineBot()
+{
     ChannelToken = config.GetValue<string>("Line:Bots:channelToken"),
     AdminUserID = config.GetValue<string>("Line:Bots:adminUserID")
 };
@@ -89,18 +98,34 @@ var lineNotify = new LineNotify()
     }
 };
 builder.Services.AddSingleton<LineNotify>(lineNotify);
-
-
-
-
-builder.Services.AddSwaggerGen(c => {
+builder.Services.AddSingleton<DiscordSocketClient>(serviceProvider =>
+{
+    var client = new DiscordSocketClient();
+    var token = config.GetValue<string>("Discord:Bots:Token");
+    client.LoginAsync(TokenType.Bot, token).GetAwaiter().GetResult();
+    client.StartAsync().GetAwaiter().GetResult();
+    if (client.ConnectionState == ConnectionState.Connected)
+    {
+        Console.WriteLine("Discord bot is connected.");
+    }
+    else
+    {
+        Console.WriteLine("Discord bot is not connected.");
+    }
+    return client;
+});
+var discordBot = new DiscordBot(builder.Services.BuildServiceProvider().GetRequiredService<DiscordSocketClient>());
+discordBot.Execute();
+builder.Services.AddSwaggerGen(c =>
+{
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Start Five Minutes Backend API", Version = "v1" });
 });
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment()) {
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
     app.UseSwaggerUI();
 }
@@ -111,4 +136,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+
 app.Run();
+
