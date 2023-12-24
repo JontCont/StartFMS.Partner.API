@@ -1,3 +1,5 @@
+using Discord;
+using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using OpenAI;
@@ -112,5 +114,30 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+builder.Services.AddSingleton<DiscordSocketClient>(async serviceProvider =>
+{
+    var client = new DiscordSocketClient();
+    await client.LoginAsync(TokenType.Bot, config.GetValue<string>("Discord:Token"));
+    await client.StartAsync();
+    return client;
+});
+ConfigureDiscordBot(app.Services.GetRequiredService<DiscordSocketClient>());
 
 app.Run();
+
+
+void ConfigureDiscordBot(DiscordSocketClient discordClient)
+{
+    discordClient.Ready += () =>
+    {
+        Console.WriteLine("Discord bot is ready.");
+        return Task.CompletedTask;
+    };
+
+    // 例如，处理消息事件
+    discordClient.MessageReceived += async (message) =>
+    {
+        // 在这里添加处理消息的逻辑
+        Console.WriteLine($"{message.Author.Username}: {message.Content}");
+    };
+}
