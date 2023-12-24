@@ -23,14 +23,17 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddOpenAIService();
 
 //add core content
-builder.Services.AddCors(options => {
+builder.Services.AddCors(options =>
+{
     options.AddDefaultPolicy(
-        builder => {
+        builder =>
+        {
             builder.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod();
         });
 
     options.AddPolicy("AnotherPolicy",
-        builder => {
+        builder =>
+        {
             builder.AllowAnyOrigin()
                     .AllowAnyHeader()
                     .AllowAnyMethod();
@@ -38,7 +41,8 @@ builder.Services.AddCors(options => {
 });
 
 //Append Filter 
-builder.Services.AddControllers(content => {
+builder.Services.AddControllers(content =>
+{
     content.Filters.Add(typeof(LogActionFilters));
     content.Filters.Add(typeof(LogExceptionFilter));
     content.Filters.Add(typeof(ApiResultFilter));
@@ -56,7 +60,8 @@ var openAiService = new OpenAIService(new OpenAiOptions()
 });
 builder.Services.AddSingleton<OpenAIService>(openAiService);
 
-var lineBots = new LineBot() {
+var lineBots = new LineBot()
+{
     ChannelToken = config.GetValue<string>("Line:Bots:channelToken"),
     AdminUserID = config.GetValue<string>("Line:Bots:adminUserID")
 };
@@ -93,18 +98,34 @@ var lineNotify = new LineNotify()
     }
 };
 builder.Services.AddSingleton<LineNotify>(lineNotify);
-
-
-
-
-builder.Services.AddSwaggerGen(c => {
+builder.Services.AddSingleton<DiscordSocketClient>(serviceProvider =>
+{
+    var client = new DiscordSocketClient();
+    var token = config.GetValue<string>("Discord:Bots:Token");
+    client.LoginAsync(TokenType.Bot, token).GetAwaiter().GetResult();
+    client.StartAsync().GetAwaiter().GetResult();
+    if (client.ConnectionState == ConnectionState.Connected)
+    {
+        Console.WriteLine("Discord bot is connected.");
+    }
+    else
+    {
+        Console.WriteLine("Discord bot is not connected.");
+    }
+    return client;
+});
+var discordBot = new DiscordBot(builder.Services.BuildServiceProvider().GetRequiredService<DiscordSocketClient>());
+discordBot.Execute();
+builder.Services.AddSwaggerGen(c =>
+{
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Start Five Minutes Backend API", Version = "v1" });
 });
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment()) {
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
     app.UseSwaggerUI();
 }
@@ -114,30 +135,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-builder.Services.AddSingleton<DiscordSocketClient>(async serviceProvider =>
-{
-    var client = new DiscordSocketClient();
-    await client.LoginAsync(TokenType.Bot, config.GetValue<string>("Discord:Token"));
-    await client.StartAsync();
-    return client;
-});
-ConfigureDiscordBot(app.Services.GetRequiredService<DiscordSocketClient>());
+
 
 app.Run();
 
-
-void ConfigureDiscordBot(DiscordSocketClient discordClient)
-{
-    discordClient.Ready += () =>
-    {
-        Console.WriteLine("Discord bot is ready.");
-        return Task.CompletedTask;
-    };
-
-    // 例如，处理消息事件
-    discordClient.MessageReceived += async (message) =>
-    {
-        // 在这里添加处理消息的逻辑
-        Console.WriteLine($"{message.Author.Username}: {message.Content}");
-    };
-}
